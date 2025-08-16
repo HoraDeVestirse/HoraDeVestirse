@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   ShoppingBag,
@@ -8,6 +8,8 @@ import {
   Search,
   Filter,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Sparkles,
   ShieldCheck,
   ExternalLink,
@@ -24,30 +26,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 // ###############################
 // Hora de Vestirse — Landing + Catálogo
-// - Con soporte de imágenes (Next/Image) o placeholders si faltan
+// - Soporta múltiples imágenes por producto (galería en modal)
 // - Buscador, filtros, ordenamiento
-// - Carrito simulado (sin pagos aún)
+// - Carrito simulado (sin pagos)
 // ###############################
 
-// Categorías visibles en los filtros
 const CATEGORIES = ["Buzos", "Sweaters", "Camperas", "Accesorios"] as const;
-
-// Tipos
 type Category = typeof CATEGORIES[number];
 
 type Product = {
   id: string;
   name: string;
-  price: number; // en ARS
+  price: number;     // ARS
   category: Category;
   licensed: boolean;
   brand: string;
   color: string;
   sizes: string[];
-  image?: string; // ruta relativa a /public (ej: "/products/archivo.jpg")
+  image?: string;    // imagen única (fallback)
+  images?: string[]; // galería
 };
 
-// Productos de ejemplo (podés editar o sumar)
 const SAMPLE_PRODUCTS: Product[] = [
   {
     id: "p1",
@@ -58,7 +57,11 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "Sanrio",
     color: "Celeste",
     sizes: ["Único"],
-    image: "/products/Marco-cinnamoroll-frente.png",
+    images: [
+      "/products/Marco-cinnamoroll-frente.png",
+      "/products/Marco-cinnamoroll-atras.png",
+      // si querés sumar otra más: "/products/Marco-cinnamoroll-detalle.png",
+    ],
   },
   { id: "p2", name: "Sweater básico unisex", price: 25999, category: "Sweaters", licensed: false, brand: "HDV", color: "Gris",   sizes: ["S","M","L","XL"] },
   { id: "p3", name: "Campera liviana",       price: 39999, category: "Camperas", licensed: false, brand: "HDV", color: "Negra", sizes: ["S","M","L","XL"] },
@@ -69,7 +72,6 @@ const SAMPLE_PRODUCTS: Product[] = [
   { id: "p8", name: "Buzo crop — edición",   price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde",     sizes: ["S","M","L"] },
 ];
 
-// Helpers
 function pesos(n: number) {
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 }
@@ -100,9 +102,20 @@ function PlaceholderArt({ seed }: { seed: string }) {
   );
 }
 
-// Tarjeta de producto
 function ProductCard({ p }: { p: Product }) {
   const [open, setOpen] = useState(false);
+
+  // imagen principal para la tarjeta
+  const mainImg = p.images?.[0] || p.image;
+
+  // estado de galería en el modal
+  const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => setIdx(0), [p.id]);
+
+  function prev() { if (imgs.length) setIdx((i) => (i - 1 + imgs.length) % imgs.length); }
+  function next() { if (imgs.length) setIdx((i) => (i + 1) % imgs.length); }
+
   return (
     <Card className="rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
       <CardContent className="p-0">
@@ -110,9 +123,9 @@ function ProductCard({ p }: { p: Product }) {
           <DialogTrigger asChild>
             <button className="w-full text-left">
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border bg-white">
-                {p.image ? (
+                {mainImg ? (
                   <Image
-                    src={p.image}
+                    src={mainImg}
                     alt={p.name}
                     fill
                     sizes="(min-width: 768px) 33vw, 100vw"
@@ -124,6 +137,7 @@ function ProductCard({ p }: { p: Product }) {
               </div>
             </button>
           </DialogTrigger>
+
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -135,13 +149,77 @@ function ProductCard({ p }: { p: Product }) {
                 )}
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+
+            {/* GALERÍA */}
+            <div className="space-y-3">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border bg-white">
+                {imgs.length ? (
+                  <>
+                    <Image
+                      src={imgs[idx]}
+                      alt={`${p.name} — ${idx + 1} de ${imgs.length}`}
+                      fill
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      className="object-cover"
+                      priority={false}
+                    />
+                    {imgs.length > 1 && (
+                      <>
+                        <button
+                          aria-label="Anterior"
+                          onClick={prev}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 border shadow"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          aria-label="Siguiente"
+                          onClick={next}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 border shadow"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
+                    {imgs.length > 1 && (
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-white/80 rounded-full px-2 py-1">
+                        {imgs.map((_, i) => (
+                          <span
+                            key={i}
+                            className={`h-1.5 w-3 rounded-full ${i === idx ? "bg-violet-600" : "bg-slate-300"}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <PlaceholderArt seed={p.id + p.name} />
+                )}
+              </div>
+
+              {imgs.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pt-1">
+                  {imgs.map((src, i) => (
+                    <button
+                      key={src}
+                      onClick={() => setIdx(i)}
+                      className={`relative h-16 w-16 rounded-xl overflow-hidden border ${i === idx ? "ring-2 ring-violet-500" : ""}`}
+                      aria-label={`Miniatura ${i + 1}`}
+                    >
+                      <Image src={src} alt={`${p.name} miniatura ${i + 1}`} fill className="object-cover" sizes="64px" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-semibold">{pesos(p.price)}</div>
                 <Badge variant="outline">{p.category}</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                Vista previa sin fotos. Muy pronto cargamos las imágenes y stock en tiempo real.
+                Vista previa. Muy pronto cargamos stock en tiempo real.
               </p>
               <Separator />
               <div className="flex flex-wrap items-center gap-2">
@@ -164,6 +242,7 @@ function ProductCard({ p }: { p: Product }) {
           </DialogContent>
         </Dialog>
       </CardContent>
+
       <CardHeader className="p-4">
         <CardTitle className="text-base flex items-center justify-between">
           <span className="line-clamp-1">{p.name}</span>
@@ -187,7 +266,6 @@ function ProductCard({ p }: { p: Product }) {
   );
 }
 
-// Página
 export default function HoraDeVestirse() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Category | "Todos">("Todos");
@@ -296,14 +374,10 @@ export default function HoraDeVestirse() {
             <div className="aspect-[5/3] rounded-2xl border bg-gradient-to-br from-violet-50 to-indigo-50 grid place-items-center">
               <div className="text-center p-6">
                 <div className="font-bold">Sin fotos por ahora</div>
-                <div className="text-sm text-muted-foreground">
-                  Usamos placeholders; cuando quieras subimos imágenes reales y stock.
-                </div>
+                <div className="text-sm text-muted-foreground">Usamos placeholders; cuando quieras subimos imágenes reales y stock.</div>
               </div>
             </div>
-            <div className="mt-3 text-xs text-muted-foreground">
-              *Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.
-            </div>
+            <div className="mt-3 text-xs text-muted-foreground">*Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.</div>
           </div>
         </div>
       </section>
@@ -364,7 +438,7 @@ export default function HoraDeVestirse() {
               <li>
                 Email:{" "}
                 <a className="underline" href="#">
-                  (agregar)
+                  (horadevestirse.ar@gmail.com)
                 </a>
               </li>
             </ul>
@@ -381,7 +455,6 @@ export default function HoraDeVestirse() {
   );
 }
 
-// Ordenamiento
 function SortSelect({
   value,
   onChange,
