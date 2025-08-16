@@ -462,8 +462,8 @@ export default function HoraDeVestirse() {
               </li>
               <li>
                 Email:{" "}
-                <a className="underline" href="#">
-                  (horadevestirse.ar@gmail.com)
+                <a className="underline" href="mailto:horadevestirse.ar@gmail.com">
+                 horadevestirse.ar@gmail.com
                 </a>
               </li>
             </ul>
