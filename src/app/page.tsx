@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import {
   ShoppingBag,
   Instagram,
@@ -22,29 +23,53 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // ###############################
-// Hora de Vestirse — Single-file React page
-// - Sin fotos por ahora (placeholders gráficos)
+// Hora de Vestirse — Landing + Catálogo
+// - Con soporte de imágenes (Next/Image) o placeholders si faltan
 // - Buscador, filtros, ordenamiento
 // - Carrito simulado (sin pagos aún)
-// - Hecho para Next.js (App Router) + Tailwind + shadcn/ui
 // ###############################
 
+// Categorías visibles en los filtros
 const CATEGORIES = ["Buzos", "Sweaters", "Camperas", "Accesorios"] as const;
 
-const SAMPLE_PRODUCTS = [
-  { id: "p1", name: "Buzo oversize — Sanrio", price: 28999, category: "Buzos", licensed: true, brand: "Sanrio", color: "Violeta", sizes: ["S","M","L","XL"] },
-  { id: "p2", name: "Sweater básico unisex", price: 25999, category: "Sweaters", licensed: false, brand: "HDV", color: "Gris", sizes: ["S","M","L","XL"] },
-  { id: "p3", name: "Campera liviana", price: 39999, category: "Camperas", licensed: false, brand: "HDV", color: "Negra", sizes: ["S","M","L","XL"] },
-  { id: "p4", name: "Buzo con capucha — Sanrio", price: 31999, category: "Buzos", licensed: true, brand: "Sanrio", color: "Rosa", sizes: ["S","M","L","XL"] },
-  { id: "p5", name: "Sweater texturado", price: 27999, category: "Sweaters", licensed: false, brand: "HDV", color: "Crema", sizes: ["S","M","L","XL"] },
-  { id: "p6", name: "Campera rompeviento", price: 42999, category: "Camperas", licensed: false, brand: "HDV", color: "Celeste", sizes: ["S","M","L","XL"] },
-  { id: "p7", name: "Gorro tejido", price: 9999, category: "Accesorios", licensed: false, brand: "HDV", color: "Azul", sizes: ["Único"] },
-  { id: "p8", name: "Buzo crop — edición", price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde", sizes: ["S","M","L"] },
-] as const;
-
+// Tipos
 type Category = typeof CATEGORIES[number];
-type Product = (typeof SAMPLE_PRODUCTS)[number];
 
+type Product = {
+  id: string;
+  name: string;
+  price: number; // en ARS
+  category: Category;
+  licensed: boolean;
+  brand: string;
+  color: string;
+  sizes: string[];
+  image?: string; // ruta relativa a /public (ej: "/products/archivo.jpg")
+};
+
+// Productos de ejemplo (podés editar o sumar)
+const SAMPLE_PRODUCTS: Product[] = [
+  {
+    id: "p1",
+    name: "Sweater Cinnamoroll",
+    price: 74990,
+    category: "Sweaters",
+    licensed: true,
+    brand: "Sanrio",
+    color: "Celeste",
+    sizes: ["Único"],
+    image: "/products/Marco-cinnamoroll-frente.png",
+  },
+  { id: "p2", name: "Sweater básico unisex", price: 25999, category: "Sweaters", licensed: false, brand: "HDV", color: "Gris",   sizes: ["S","M","L","XL"] },
+  { id: "p3", name: "Campera liviana",       price: 39999, category: "Camperas", licensed: false, brand: "HDV", color: "Negra", sizes: ["S","M","L","XL"] },
+  { id: "p4", name: "Buzo con capucha — Sanrio", price: 31999, category: "Buzos", licensed: true, brand: "Sanrio", color: "Rosa", sizes: ["S","M","L","XL"] },
+  { id: "p5", name: "Sweater texturado",     price: 27999, category: "Sweaters", licensed: false, brand: "HDV", color: "Crema",  sizes: ["S","M","L","XL"] },
+  { id: "p6", name: "Campera rompeviento",   price: 42999, category: "Camperas", licensed: false, brand: "HDV", color: "Celeste",sizes: ["S","M","L","XL"] },
+  { id: "p7", name: "Gorro tejido",          price:  9999, category: "Accesorios", licensed: false, brand: "HDV", color: "Azul", sizes: ["Único"] },
+  { id: "p8", name: "Buzo crop — edición",   price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde",     sizes: ["S","M","L"] },
+];
+
+// Helpers
 function pesos(n: number) {
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 }
@@ -75,6 +100,7 @@ function PlaceholderArt({ seed }: { seed: string }) {
   );
 }
 
+// Tarjeta de producto
 function ProductCard({ p }: { p: Product }) {
   const [open, setOpen] = useState(false);
   return (
@@ -83,7 +109,19 @@ function ProductCard({ p }: { p: Product }) {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <button className="w-full text-left">
-              <PlaceholderArt seed={p.id + p.name} />
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden border bg-white">
+                {p.image ? (
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <PlaceholderArt seed={p.id + p.name} />
+                )}
+              </div>
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
@@ -149,6 +187,7 @@ function ProductCard({ p }: { p: Product }) {
   );
 }
 
+// Página
 export default function HoraDeVestirse() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Category | "Todos">("Todos");
@@ -182,7 +221,12 @@ export default function HoraDeVestirse() {
           <div className="ml-auto hidden md:flex items-center gap-2">
             <div className="relative w-80">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar: buzos, sanrio, campera…" className="pl-8" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar: buzos, sanrio, campera…"
+                className="pl-8"
+              />
             </div>
             <a href="https://www.instagram.com/horadevestirse.ar" target="_blank" rel="noreferrer">
               <Button variant="outline" className="gap-2">
@@ -199,10 +243,17 @@ export default function HoraDeVestirse() {
                 <SheetHeader>
                   <SheetTitle>Tu carrito</SheetTitle>
                 </SheetHeader>
-                <div className="py-6 text-sm text-muted-foreground">Aún no activamos el carrito. Muy pronto vas a poder comprar desde acá 💜</div>
+                <div className="py-6 text-sm text-muted-foreground">
+                  Aún no activamos el carrito. Muy pronto vas a poder comprar desde acá 💜
+                </div>
                 <Separator />
                 <div className="pt-4">
-                  <a href="https://www.instagram.com/horadevestirse.ar" target="_blank" rel="noreferrer" className="text-sm inline-flex items-center gap-1 underline">
+                  <a
+                    href="https://www.instagram.com/horadevestirse.ar"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm inline-flex items-center gap-1 underline"
+                  >
                     Reservá por Instagram <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
@@ -220,7 +271,8 @@ export default function HoraDeVestirse() {
               Llega <span className="text-violet-600">Hora de vestirse</span>
             </h1>
             <p className="mt-3 text-slate-600 max-w-prose">
-              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio) y otras de producción propia.
+              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio) y otras de
+              producción propia.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <a href="#catalogo">
@@ -244,10 +296,14 @@ export default function HoraDeVestirse() {
             <div className="aspect-[5/3] rounded-2xl border bg-gradient-to-br from-violet-50 to-indigo-50 grid place-items-center">
               <div className="text-center p-6">
                 <div className="font-bold">Sin fotos por ahora</div>
-                <div className="text-sm text-muted-foreground">Usamos placeholders; cuando quieras subimos imágenes reales y stock.</div>
+                <div className="text-sm text-muted-foreground">
+                  Usamos placeholders; cuando quieras subimos imágenes reales y stock.
+                </div>
               </div>
             </div>
-            <div className="mt-3 text-xs text-muted-foreground">*Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.</div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              *Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.
+            </div>
           </div>
         </div>
       </section>
@@ -325,6 +381,7 @@ export default function HoraDeVestirse() {
   );
 }
 
+// Ordenamiento
 function SortSelect({
   value,
   onChange,
