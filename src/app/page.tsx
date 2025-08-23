@@ -105,7 +105,7 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Marco-Gudetama-atras.png",
       "/products/Talle-Sweater-Gudetama.jpg",
     ],
-    },
+   },
 //  { id: "p5", 
 //    name: "Campera Bomber Kuromi",       
 //    price: 124990, 
