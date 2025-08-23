@@ -26,9 +26,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 // ###############################
 // Hora de Vestirse — Landing + Catálogo
-// - Soporta múltiples imágenes por producto (galería en modal)
+// - Héroe con carrusel (4 imágenes)
 // - Buscador, filtros, ordenamiento
-// - Carrito simulado (sin pagos)
+// - Galería por producto (modal)
 // ###############################
 
 const CATEGORIES = ["Buzos", "Sweaters", "Camperas", "Accesorios"] as const;
@@ -47,9 +47,39 @@ type Product = {
   images?: string[]; // galería
 };
 
+// ORDEN: Hello Kitty, My Melody, Cinnamoroll, Gudetama
 const SAMPLE_PRODUCTS: Product[] = [
   {
-    id: "p1",
+    id: "hello-kitty",
+    name: "Sweater Hello Kitty",
+    price: 74990,
+    category: "Sweaters",
+    licensed: true,
+    brand: "Sanrio",
+    color: "Rosa",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Hello-Kitty-frente.png",
+      "/products/Marco-Hello-Kitty-atras.png",
+      "/products/Talle-Sweater-Hello-Kitty.jpg",
+    ],
+  },
+  {
+    id: "my-melody-kuromi",
+    name: "Sweater My Melody y Kuromi",
+    price: 74990,
+    category: "Sweaters",
+    licensed: true,
+    brand: "Sanrio",
+    color: "Negro",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-My-Melody-y-Kuromi-frente.png",
+      "/products/Sweater-My-Melody-y-Kuromi.jpg",
+    ],
+  },
+  {
+    id: "cinnamoroll",
     name: "Sweater Cinnamoroll",
     price: 74990,
     category: "Sweaters",
@@ -61,38 +91,10 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Marco-cinnamoroll-frente.png",
       "/products/Marco-cinnamoroll-atras.png",
       "/products/Talle-Sweater-Cinnamoroll.jpg",
-      // si querés sumar otra más: "/products/Marco-cinnamoroll-detalle.png",
     ],
   },
-  { 
-    id: "p2",
-     name: "Sweater My Melody y Kuromi",
-      price: 74990,
-      category: "Sweaters",
-      licensed: true,
-      brand: "Sanrio",
-      color: "Negro",
-      sizes: ["ÚNICO"],
-      images: [
-           "/products/Marco-My-Melody-y-Kuromi-frente.png",
-           "/products/Sweater-My-Melody-y-Kuromi.jpg",
-    ],
-          },
-  { id: "p3", 
-    name: "Sweater Hello Kitty", 
-    price: 74990, 
-    category: "Sweaters", 
-    licensed: true, 
-    brand: "Sanrio", 
-    color: "Rosa",   
-    sizes: ["ÚNICO"],
-    images: [
-      "/products/Marco-Hello-Kitty-frente.png",
-      "/products/Marco-Hello-Kitty-atras.png",
-      "/products/Talle-Sweater-Hello-Kitty.jpg",
-    ],
-   },
-  { id: "p4",
+  {
+    id: "gudetama",
     name: "Sweater Gudetama",
     price: 74990,
     category: "Sweaters",
@@ -105,25 +107,7 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Marco-Gudetama-atras.png",
       "/products/Talle-Sweater-Gudetama.jpg",
     ],
-   },
-//  { id: "p5", 
-//    name: "Campera Bomber Kuromi",       
-//    price: 124990, 
-//    category: "Camperas", 
-//    licensed: true, 
-//    brand: "Sanrio", 
-//    color: "Negra", 
-//    sizes: ["ÚNICO"],
-//    images: [
-//      "/products/Marco-Kuromi-campera-bompler-frente.png",
-//     "/products/Marco-Kuromi-campera-bompler-atras.png",
-//      "/products/Talle-Campera-Bomber-Kuromi.jpeg",
-//    ],
-//   },
-//  { id: "p6", name: "Sweater texturado",     price: 27999, category: "Sweaters", licensed: false, brand: "HDV", color: "Crema",  sizes: ["S","M","L","XL"] },
-//  { id: "p7", name: "Campera rompeviento",   price: 42999, category: "Camperas", licensed: false, brand: "HDV", color: "Celeste",sizes: ["S","M","L","XL"] },
-//  { id: "p8", name: "Gorro tejido",          price:  9999, category: "Accesorios", licensed: false, brand: "HDV", color: "Azul", sizes: ["Único"] },
-//  { id: "p9", name: "Buzo crop — edición",   price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde",     sizes: ["S","M","L"] },
+  },
 ];
 
 function pesos(n: number) {
@@ -156,13 +140,70 @@ function PlaceholderArt({ seed }: { seed: string }) {
   );
 }
 
+/* =========================
+   HÉROE: CARRUSEL SIMPLE
+   ========================= */
+function HeroCarousel() {
+  const slides = [
+    { src: "/products/Marco-Hello-Kitty-frente.png", alt: "Sweater Hello Kitty" },
+    { src: "/products/Marco-My-Melody-y-Kuromi-frente.png", alt: "Sweater My Melody y Kuromi" },
+    { src: "/products/Marco-cinnamoroll-frente.png", alt: "Sweater Cinnamoroll" },
+    { src: "/products/Marco-Gudetama-frente.png", alt: "Sweater Gudetama" },
+  ];
+  const [i, setI] = useState(0);
+
+  // autoplay
+  useEffect(() => {
+    const id = setInterval(() => setI((p) => (p + 1) % slides.length), 3500);
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  const go = (delta: number) => setI((p) => (p + delta + slides.length) % slides.length);
+
+  return (
+    <div className="relative aspect-[5/3] rounded-2xl overflow-hidden border bg-white">
+      {slides.map((s, idx) => (
+        <div
+          key={s.src}
+          className={`absolute inset-0 transition-opacity duration-500 ${idx === i ? "opacity-100" : "opacity-0"}`}
+        >
+          <Image src={s.src} alt={s.alt} fill className="object-cover" priority={idx === 0} />
+        </div>
+      ))}
+
+      <button
+        aria-label="Anterior"
+        onClick={() => go(-1)}
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full p-2 border shadow"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+      <button
+        aria-label="Siguiente"
+        onClick={() => go(1)}
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full p-2 border shadow"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
+
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-white/80 rounded-full px-2 py-1">
+        {slides.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setI(idx)}
+            className={`h-1.5 w-3 rounded-full ${idx === i ? "bg-violet-600" : "bg-slate-300"}`}
+            aria-label={`Ir al slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProductCard({ p }: { p: Product }) {
   const [open, setOpen] = useState(false);
 
-  // imagen principal para la tarjeta
   const mainImg = p.images?.[0] || p.image;
-
-  // estado de galería en el modal
   const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
   const [idx, setIdx] = useState(0);
   useEffect(() => setIdx(0), [p.id]);
@@ -424,21 +465,19 @@ export default function HoraDeVestirse() {
               <span>Hecho en Argentina</span>
             </div>
           </div>
+
           <div className="rounded-3xl border p-6 bg-white/60">
-            <div className="aspect-[5/3] rounded-2xl border bg-gradient-to-br from-violet-50 to-indigo-50 grid place-items-center">
-              <div className="text-center p-6">
-                <div className="font-bold">Galería de productos</div>
-                <div className="text-sm text-muted-foreground">Mirá los detalles y más fotos en cada producto.</div>
-              </div>
+            <HeroCarousel />
+            <div className="mt-3 text-xs text-muted-foreground">
+              *Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.
             </div>
-            <div className="mt-3 text-xs text-muted-foreground">*Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.</div>
           </div>
         </div>
       </section>
 
       {/* Filtros */}
       <section id="catalogo" className="max-w-6xl mx-auto px-4">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="relative mb-3 flex flex-wrap items-center gap-2">
           <Button variant={active === "Todos" ? "default" : "outline"} onClick={() => setActive("Todos")}>
             <Filter className="h-4 w-4 mr-2" />
             Todos
@@ -486,7 +525,7 @@ export default function HoraDeVestirse() {
               <li>
                 Email:{" "}
                 <a className="underline" href="mailto:horadevestirse.ar@gmail.com">
-                 horadevestirse.ar@gmail.com
+                  horadevestirse.ar@gmail.com
                 </a>
               </li>
             </ul>
@@ -503,6 +542,7 @@ export default function HoraDeVestirse() {
   );
 }
 
+/* Ordenar */
 function SortSelect({
   value,
   onChange,
@@ -512,24 +552,45 @@ function SortSelect({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="relative">
-      <Button variant="outline" onClick={() => setOpen((v) => !v)} className="gap-2">
-        <ChevronDown className="h-4 w-4" /> Ordenar
-      </Button>
-      {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white shadow">
-          <button className={itemCls(value === "destacados")} onClick={() => { onChange("destacados"); setOpen(false); }}>
-            Destacados
-          </button>
-          <button className={itemCls(value === "precio-asc")} onClick={() => { onChange("precio-asc"); setOpen(false); }}>
-            Precio: menor a mayor
-          </button>
-          <button className={itemCls(value === "precio-desc")} onClick={() => { onChange("precio-desc"); setOpen(false); }}>
-            Precio: mayor a menor
-          </button>
-        </div>
-      )}
-    </div>
+    <>
+      {open && <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />}
+      <div className="relative z-50">
+        <Button variant="outline" onClick={() => setOpen((v) => !v)} className="gap-2">
+          <ChevronDown className="h-4 w-4" /> Ordenar
+        </Button>
+        {open && (
+          <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white shadow-lg z-50">
+            <button
+              className={itemCls(value === "destacados")}
+              onClick={() => {
+                onChange("destacados");
+                setOpen(false);
+              }}
+            >
+              Destacados
+            </button>
+            <button
+              className={itemCls(value === "precio-asc")}
+              onClick={() => {
+                onChange("precio-asc");
+                setOpen(false);
+              }}
+            >
+              Precio: menor a mayor
+            </button>
+            <button
+              className={itemCls(value === "precio-desc")}
+              onClick={() => {
+                onChange("precio-desc");
+                setOpen(false);
+              }}
+            >
+              Precio: mayor a menor
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
