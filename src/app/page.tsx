@@ -60,10 +60,25 @@ const SAMPLE_PRODUCTS: Product[] = [
     images: [
       "/products/Marco-cinnamoroll-frente.png",
       "/products/Marco-cinnamoroll-atras.png",
+      "/products/Talle-Sweater-Cinnamoroll.jpg",
       // si querés sumar otra más: "/products/Marco-cinnamoroll-detalle.png",
     ],
   },
-  { id: "p2", 
+  { 
+    id: "p2",
+     name: "Sweater My Melody y Kuromi",
+      price: 74990,
+      category: "Sweaters",
+      licensed: true,
+      brand: "Sanrio",
+      color: "Negro",
+      sizes: ["ÚNICO"],
+      images: [
+           "/products/Marco-My-Melody-y-Kuromi-frente.png",
+           "/products/Sweater-My-Melody-y-Kuromi.jpg",
+    ],
+          },
+  { id: "p3", 
     name: "Sweater Hello Kitty", 
     price: 74990, 
     category: "Sweaters", 
@@ -74,27 +89,41 @@ const SAMPLE_PRODUCTS: Product[] = [
     images: [
       "/products/Marco-Hello-Kitty-frente.png",
       "/products/Marco-Hello-Kitty-atras.png",
+      "/products/Talle-Sweater-Hello-Kitty.jpg",
     ],
    },
-  { id: "p3", 
-    name: "Campera Bomber Kuromi",       
-    price: 124990, 
-    category: "Camperas", 
-    licensed: true, 
-    brand: "Sanrio", 
-    color: "Negra", 
+  { id: "p4",
+    name: "Sweater Gudetama",
+    price: 74990,
+    category: "Sweaters",
+    licensed: true,
+    brand: "Sanrio",
+    color: "Amarillo",
     sizes: ["ÚNICO"],
     images: [
-      "/products/Marco-Kuromi-campera-bompler-frente.png",
-      "/products/Marco-Kuromi-campera-bompler-atras.png",
-      "/products/Talle-Campera-Bomber-Kuromi.jpeg",
+      "/products/Marco-Gudetama-frente.png",
+      "/products/Marco-Gudetama-atras.png",
+      "/products/Talle-Sweater-Gudetama.jpg",
     ],
-   },
-  { id: "p4", name: "Buzo con capucha — Sanrio", price: 31999, category: "Buzos", licensed: true, brand: "Sanrio", color: "Rosa", sizes: ["S","M","L","XL"] },
-  { id: "p5", name: "Sweater texturado",     price: 27999, category: "Sweaters", licensed: false, brand: "HDV", color: "Crema",  sizes: ["S","M","L","XL"] },
-  { id: "p6", name: "Campera rompeviento",   price: 42999, category: "Camperas", licensed: false, brand: "HDV", color: "Celeste",sizes: ["S","M","L","XL"] },
-  { id: "p7", name: "Gorro tejido",          price:  9999, category: "Accesorios", licensed: false, brand: "HDV", color: "Azul", sizes: ["Único"] },
-  { id: "p8", name: "Buzo crop — edición",   price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde",     sizes: ["S","M","L"] },
+    },
+//  { id: "p5", 
+//    name: "Campera Bomber Kuromi",       
+//    price: 124990, 
+//    category: "Camperas", 
+//    licensed: true, 
+//    brand: "Sanrio", 
+//    color: "Negra", 
+//    sizes: ["ÚNICO"],
+//    images: [
+//      "/products/Marco-Kuromi-campera-bompler-frente.png",
+//     "/products/Marco-Kuromi-campera-bompler-atras.png",
+//      "/products/Talle-Campera-Bomber-Kuromi.jpeg",
+//    ],
+//   },
+//  { id: "p6", name: "Sweater texturado",     price: 27999, category: "Sweaters", licensed: false, brand: "HDV", color: "Crema",  sizes: ["S","M","L","XL"] },
+//  { id: "p7", name: "Campera rompeviento",   price: 42999, category: "Camperas", licensed: false, brand: "HDV", color: "Celeste",sizes: ["S","M","L","XL"] },
+//  { id: "p8", name: "Gorro tejido",          price:  9999, category: "Accesorios", licensed: false, brand: "HDV", color: "Azul", sizes: ["Único"] },
+//  { id: "p9", name: "Buzo crop — edición",   price: 29999, category: "Buzos", licensed: false, brand: "HDV", color: "Verde",     sizes: ["S","M","L"] },
 ];
 
 function pesos(n: number) {
@@ -374,7 +403,7 @@ export default function HoraDeVestirse() {
               Llega <span className="text-violet-600">Hora de vestirse</span>
             </h1>
             <p className="mt-3 text-slate-600 max-w-prose">
-              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio) y otras de
+              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio, Garfield, Nickelodeon) y otras de
               producción propia.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -398,8 +427,8 @@ export default function HoraDeVestirse() {
           <div className="rounded-3xl border p-6 bg-white/60">
             <div className="aspect-[5/3] rounded-2xl border bg-gradient-to-br from-violet-50 to-indigo-50 grid place-items-center">
               <div className="text-center p-6">
-                <div className="font-bold">Sin fotos por ahora</div>
-                <div className="text-sm text-muted-foreground">Usamos placeholders; cuando quieras subimos imágenes reales y stock.</div>
+                <div className="font-bold">Galería de productos</div>
+                <div className="text-sm text-muted-foreground">Mirá los detalles y más fotos en cada producto.</div>
               </div>
             </div>
             <div className="mt-3 text-xs text-muted-foreground">*Esta interfaz es 100% funcional para buscar y filtrar. Carrito/pagos próximamente.</div>
@@ -455,12 +484,6 @@ export default function HoraDeVestirse() {
                 </a>
               </li>
               <li>
-                <span>WhatsApp: </span>
-                <a className="underline" href="#" title="Reemplazá con tu link wa.me">
-                  (agregar link)
-                </a>
-              </li>
-              <li>
                 Email:{" "}
                 <a className="underline" href="mailto:horadevestirse.ar@gmail.com">
                  horadevestirse.ar@gmail.com
@@ -471,7 +494,7 @@ export default function HoraDeVestirse() {
           <div>
             <div className="font-semibold">Licencias</div>
             <p className="mt-2 text-muted-foreground">
-              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio) y líneas de producción propia.
+              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio, Garfield, South Park) y líneas de producción propia.
             </p>
           </div>
         </div>
