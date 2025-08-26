@@ -108,6 +108,35 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Talle-Sweater-Gudetama.jpg",
     ],
   },
+  { id: "Racer-Hello-Kitty", 
+    name: "Campera Racer Hello Kitty", 
+    price: 129990, 
+    category: "Camperas", 
+    licensed: true, 
+    brand: "Sanrio", 
+    color: "Rosa",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Campera-Hello-Kitty-Racer-atras.png",
+      "/products/Marco-Campera-Hello-Kitty-Racer-frente.png",
+      "/products/Talle-Campera-Hello-Kitty-Racer.jpeg",
+    ]
+   },
+   { id: "Racer-Kuromi", 
+    name: "Campera Racer Kuromi", 
+    price: 129990, 
+    category: "Camperas", 
+    licensed: true, 
+    brand: "Sanrio", 
+    color: "Lila",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Campera-Kuromi-racer-atras.png",
+      "/products/Marco-Campera-Kuromi-racer-frente-abierta.png",
+      "/products/Marco-Campera-Kuromi-racer-frente.png",
+      "/products/Talle-Campera-Racer-Kuromi.jpg",
+    ]
+   },
 ];
 
 function pesos(n: number) {
