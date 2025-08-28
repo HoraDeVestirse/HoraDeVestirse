@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   ExternalLink,
   BadgeCheck,
+  CreditCard,
+  Banknote,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 // - Héroe con carrusel (4 imágenes)
 // - Buscador, filtros, ordenamiento
 // - Galería por producto (modal)
+// - Aviso de formas de pago (hero + modal)
 // ###############################
 
 const CATEGORIES = ["Buzos", "Sweaters", "Camperas", "Accesorios"] as const;
@@ -108,41 +111,44 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Talle-Sweater-Gudetama.jpg",
     ],
   },
-  { id: "Racer-Hello-Kitty", 
-    name: "Campera Racer Hello Kitty", 
-    price: 129990, 
-    category: "Camperas", 
-    licensed: true, 
-    brand: "Sanrio", 
+  {
+    id: "Racer-Hello-Kitty",
+    name: "Campera Racer Hello Kitty",
+    price: 129990,
+    category: "Camperas",
+    licensed: true,
+    brand: "Sanrio",
     color: "Rosa",
     sizes: ["ÚNICO"],
     images: [
-      "/products/Marco-Campera-Hello-Kitty-Racer-atras.png",
       "/products/Marco-Campera-Hello-Kitty-Racer-frente.png",
+      "/products/Marco-Campera-Hello-Kitty-Racer-atras.png",
       "/products/Talle-Campera-Hello-Kitty-Racer.jpeg",
-    ]
-   },
-   { id: "Racer-Kuromi", 
-    name: "Campera Racer Kuromi", 
-    price: 129990, 
-    category: "Camperas", 
-    licensed: true, 
-    brand: "Sanrio", 
+    ],
+  },
+  {
+    id: "Racer-Kuromi",
+    name: "Campera Racer Kuromi",
+    price: 129990,
+    category: "Camperas",
+    licensed: true,
+    brand: "Sanrio",
     color: "Lila",
     sizes: ["ÚNICO"],
     images: [
-      "/products/Marco-Campera-Kuromi-racer-atras.png",
-      "/products/Marco-Campera-Kuromi-racer-frente-abierta.png",
       "/products/Marco-Campera-Kuromi-racer-frente.png",
+      "/products/Marco-Campera-Kuromi-racer-frente-abierta.png",
+      "/products/Marco-Campera-Kuromi-racer-atras.png",
       "/products/Talle-Campera-Racer-Kuromi.jpg",
-    ]
-   },
-   { id: "Campe-Cinna", 
-    name: "Campera Cinnamoroll", 
-    price: 114990, 
-    category: "Camperas", 
-    licensed: true, 
-    brand: "Sanrio", 
+    ],
+  },
+  {
+    id: "Campe-Cinna",
+    name: "Campera Cinnamoroll",
+    price: 114990,
+    category: "Camperas",
+    licensed: true,
+    brand: "Sanrio",
     color: "Blanco",
     sizes: ["ÚNICO"],
     images: [
@@ -150,22 +156,23 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Marco-Cinnamoroll-campera-frente-abierta.png",
       "/products/Marco-Cinnamoroll-campera-atras.png",
       "/products/talle-Campera-Cinnamoroll.jpeg",
-    ]
-   },
-   { id: "Bomber-Kuromi", 
-    name: "Campera Bomber Kuromi", 
-    price: 124990, 
-    category: "Camperas", 
-    licensed: true, 
-    brand: "Sanrio", 
+    ],
+  },
+  {
+    id: "Bomber-Kuromi",
+    name: "Campera Bomber Kuromi",
+    price: 124990,
+    category: "Camperas",
+    licensed: true,
+    brand: "Sanrio",
     color: "Negro",
     sizes: ["ÚNICO"],
     images: [
       "/products/Marco-Kuromi-campera-bomber-frente.png",
       "/products/Marco-Kuromi-campera-bomber-atras.png",
       "/products/Talle-Campera-Bomber-Kuromi.jpeg",
-    ]
-   },
+    ],
+  },
 ];
 
 function pesos(n: number) {
@@ -194,6 +201,24 @@ function PlaceholderArt({ seed }: { seed: string }) {
       <div className="absolute top-6 left-6 h-4 w-24 rounded-full" style={{ background: bar }} />
       <div className="absolute top-12 left-6 h-3 w-12 rounded-full" style={{ background: bar, opacity: 0.8 }} />
       <div className="absolute bottom-6 left-6 h-2 w-16 rounded-full" style={{ background: bar, opacity: 0.6 }} />
+    </div>
+  );
+}
+
+/* =========================
+   AVISO DE PAGO (reutilizable)
+   ========================= */
+function PaymentNotice({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`rounded-xl border bg-white/80 ${compact ? "p-2 text-sm" : "p-3"}`}>
+      <div className="flex items-center gap-2">
+        <Banknote className="h-4 w-4 text-green-600" />
+        <span>10% de descuento pagando en efectivo/transferencia</span>
+      </div>
+      <div className="mt-1 flex items-center gap-2">
+        <CreditCard className="h-4 w-4" />
+        <span>3 cuotas sin interés con tarjeta de crédito</span>
+      </div>
     </div>
   );
 }
@@ -371,6 +396,12 @@ function ProductCard({ p }: { p: Product }) {
                 <div className="text-2xl font-semibold">{pesos(p.price)}</div>
                 <Badge variant="outline">{p.category}</Badge>
               </div>
+
+              {/* Aviso de formas de pago (compacto) */}
+              <div className="mt-2">
+                <PaymentNotice compact />
+              </div>
+
               <p className="text-sm text-muted-foreground">
                 Vista previa. Muy pronto cargamos stock en tiempo real.
               </p>
@@ -515,6 +546,12 @@ export default function HoraDeVestirse() {
                 </Button>
               </a>
             </div>
+
+            {/* Aviso de formas de pago (visible en el hero) */}
+            <div className="mt-4">
+              <PaymentNotice />
+            </div>
+
             <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
               <Badge variant="secondary" className="gap-1">
                 <BadgeCheck className="h-3 w-3" /> Licencia Sanrio
