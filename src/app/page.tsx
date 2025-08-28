@@ -137,6 +137,35 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Talle-Campera-Racer-Kuromi.jpg",
     ]
    },
+   { id: "Campe-Cinna", 
+    name: "Campera Cinnamoroll", 
+    price: 114990, 
+    category: "Camperas", 
+    licensed: true, 
+    brand: "Sanrio", 
+    color: "Blanco",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Cinnamoroll-campera-frente.png",
+      "/products/Marco-Cinnamoroll-campera-frente-abierta.png",
+      "/products/Marco-Cinnamoroll-campera-atras.png",
+      "/products/talle-Campera-Cinnamoroll.jpeg",
+    ]
+   },
+   { id: "Bomber-Kuromi", 
+    name: "Campera Bomber Kuromi", 
+    price: 124990, 
+    category: "Camperas", 
+    licensed: true, 
+    brand: "Sanrio", 
+    color: "Negro",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Kuromi-campera-bomber-frente.png",
+      "/products/Marco-Kuromi-campera-bomber-atras.png",
+      "/products/Talle-Campera-Bomber-Kuromi.jpeg",
+    ]
+   },
 ];
 
 function pesos(n: number) {
