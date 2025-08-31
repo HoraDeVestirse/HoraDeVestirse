@@ -46,8 +46,8 @@ type Product = {
   brand: string;
   color: string;
   sizes: string[];
-  image?: string;    // imagen única (fallback)
-  images?: string[]; // galería
+  image?: string;
+  images?: string[];
 };
 
 // ORDEN: Hello Kitty, My Melody, Cinnamoroll, Gudetama
@@ -173,6 +173,20 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/Talle-Campera-Bomber-Kuromi.jpeg",
     ],
   },
+  {
+    id: "buzo-book",
+    name: "Buzo Burn Book",
+    price: 69990,
+    category: "Buzos",
+    licensed: true,
+    brand: "Mean Girls",
+    color: "Rosa",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Burn-Book-frente.png",
+      "/products/talle-burn-book.png",
+    ],
+  },
 ];
 
 function pesos(n: number) {
@@ -235,7 +249,6 @@ function HeroCarousel() {
   ];
   const [i, setI] = useState(0);
 
-  // autoplay
   useEffect(() => {
     const id = setInterval(() => setI((p) => (p + 1) % slides.length), 3500);
     return () => clearInterval(id);
@@ -322,7 +335,8 @@ function ProductCard({ p }: { p: Product }) {
                 {p.name}
                 {p.licensed && (
                   <Badge className="gap-1" variant="secondary">
-                    <ShieldCheck className="h-3 w-3" /> Con licencia
+                    <ShieldCheck className="h-3 w-3" />
+                    {p.brand ? `Licencia ${p.brand}` : "Con licencia"}
                   </Badge>
                 )}
               </DialogTitle>
@@ -432,7 +446,7 @@ function ProductCard({ p }: { p: Product }) {
           <span className="line-clamp-1">{p.name}</span>
           {p.licensed && (
             <Badge className="ml-2" variant="secondary">
-              Licencia
+              {p.brand ? `Licencia ${p.brand}` : "Licencia oficial"}
             </Badge>
           )}
         </CardTitle>
@@ -454,6 +468,19 @@ export default function HoraDeVestirse() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Category | "Todos">("Todos");
   const [sort, setSort] = useState<"destacados" | "precio-asc" | "precio-desc">("destacados");
+
+  // Licencias únicas para mostrar en el hero
+  const licensedBrands = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          SAMPLE_PRODUCTS
+            .filter((p) => p.licensed && p.brand && p.brand.trim().length > 0)
+            .map((p) => p.brand)
+        )
+      ),
+    []
+  );
 
   const filtered = useMemo(() => {
     let list = SAMPLE_PRODUCTS.filter((p) => (active === "Todos" ? true : p.category === active));
@@ -547,14 +574,18 @@ export default function HoraDeVestirse() {
               </a>
             </div>
 
-            {/* Aviso de formas de pago (visible en el hero) */}
+            {/* Aviso de formas de pago */}
             <div className="mt-4">
               <PaymentNotice />
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+            {/* Licencias dinámicas */}
+            <div className="mt-4 flex items-center gap-2 text-sm text-slate-500 flex-wrap">
               <Badge variant="secondary" className="gap-1">
-                <BadgeCheck className="h-3 w-3" /> Licencia Sanrio
+                <BadgeCheck className="h-3 w-3" />
+                {licensedBrands.length > 0
+                  ? `Licencias: ${licensedBrands.join(", ")}`
+                  : "Licencias oficiales"}
               </Badge>
               <span>·</span>
               <span>Hecho en Argentina</span>
