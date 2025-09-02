@@ -28,7 +28,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 // ###############################
 // Hora de Vestirse — Landing + Catálogo
-// - Héroe con carrusel (4 imágenes)
+// - Héroe con carrusel (1 foto por producto seleccionado)
 // - Buscador, filtros, ordenamiento
 // - Galería por producto (modal)
 // - Aviso de formas de pago (hero + modal)
@@ -187,6 +187,67 @@ const SAMPLE_PRODUCTS: Product[] = [
       "/products/talle-burn-book.png",
     ],
   },
+  {
+    id: "buzo-garfi",
+    name: "Buzo Garfield",
+    price: 89990,
+    category: "Buzos",
+    licensed: true,
+    brand: "Nickelodeon",
+    color: "Naranja",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Garfield-frente-final.png",
+      "/products/Marco-Garfield-atras-final.png",
+      "/products/Talle-Garfield.png",
+    ],
+  },
+  {
+    id: "buzo-nick",
+    name: "Buzo Nick 90's",
+    price: 119990,
+    category: "Buzos",
+    licensed: true,
+    brand: "Nickelodeon",
+    color: "Violeta",
+    sizes: ["ÚNICO"],
+    images: [
+      "/products/Marco-Nick90-frente.png",
+      "/products/Marco-Nick90-atras.png",
+      "/products/Talle-buzo-Nick90.png",
+    ],
+  },
+  {
+    id: "buzo-appa", 
+    name: "Buzo Appa",
+    price: 124990,
+    category: "Buzos",
+    licensed: true,
+    brand: "Avatar",
+    color: "Blanco",
+    sizes: ["1", "2"],
+    images: [
+      "/products/Marco-Appa-frente.png",
+      "/products/Marco-Appa-atras.png",
+      "/products/talle-buzo-appa.png",
+    ],
+  },
+];
+
+// === Qué productos entran en el carrusel del héroe (1 foto c/u y en este orden)
+const HERO_PRODUCT_IDS = [
+  "hello-kitty",
+  "my-melody-kuromi",
+  "cinnamoroll",
+  "gudetama",
+  "Racer-Hello-Kitty",
+  "Racer-Kuromi",
+  "Campe-Cinna",
+  "Bomber-Kuromi",
+  "buzo-book",
+  "buzo-garfi",
+  "buzo-nick",
+  "buzo-appa",
 ];
 
 function pesos(n: number) {
@@ -238,15 +299,17 @@ function PaymentNotice({ compact = false }: { compact?: boolean }) {
 }
 
 /* =========================
-   HÉROE: CARRUSEL SIMPLE
+   HÉROE: CARRUSEL (1 foto por producto seleccionado)
    ========================= */
 function HeroCarousel() {
-  const slides = [
-    { src: "/products/Marco-Hello-Kitty-frente.png", alt: "Sweater Hello Kitty" },
-    { src: "/products/Marco-My-Melody-y-Kuromi-frente.png", alt: "Sweater My Melody y Kuromi" },
-    { src: "/products/Marco-cinnamoroll-frente.png", alt: "Sweater Cinnamoroll" },
-    { src: "/products/Marco-Gudetama-frente.png", alt: "Sweater Gudetama" },
-  ];
+  const slides = useMemo(() => {
+    const byId = new Map(SAMPLE_PRODUCTS.map((p) => [p.id, p]));
+    return HERO_PRODUCT_IDS
+      .map((id) => byId.get(id))
+      .filter((p): p is Product => Boolean(p && p.images && p.images[0]))
+      .map((p) => ({ src: p.images![0]!, alt: p.name }));
+  }, []);
+
   const [i, setI] = useState(0);
 
   useEffect(() => {
@@ -560,7 +623,7 @@ export default function HoraDeVestirse() {
               Llega <span className="text-violet-600">Hora de vestirse</span>
             </h1>
             <p className="mt-3 text-slate-600 max-w-prose">
-              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio, Garfield, Nickelodeon) y otras de
+              Catálogo online de buzos, sweaters, camperas y más. Algunas piezas con <strong>licencia oficial</strong> (ej: Sanrio, Garfield, Nickelodeon, Avatar, Mean Girls) y otras de
               producción propia.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -659,7 +722,7 @@ export default function HoraDeVestirse() {
           <div>
             <div className="font-semibold">Licencias</div>
             <p className="mt-2 text-muted-foreground">
-              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio, Garfield, South Park) y líneas de producción propia.
+              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio, Garfield, Nickelodeon, Avatar, Mean Girls) y líneas de producción propia.
             </p>
           </div>
         </div>
