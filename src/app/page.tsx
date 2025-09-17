@@ -26,14 +26,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-// ###############################
-// Hora de Vestirse — Landing + Catálogo
-// - Héroe con carrusel (1 foto por producto seleccionado)
-// - Buscador, filtros, ordenamiento
-// - Galería por producto (modal)
-// - Aviso de formas de pago (hero + modal)
-// ###############################
-
+/* =========================================================
+   CONFIG
+   ========================================================= */
 const CATEGORIES = ["Buzos", "Sweaters", "Camperas", "Accesorios"] as const;
 type Category = typeof CATEGORIES[number];
 
@@ -50,7 +45,9 @@ type Product = {
   images?: string[];
 };
 
-// ORDEN: Hello Kitty, My Melody, Cinnamoroll, Gudetama
+/* =========================================================
+   DATA
+   ========================================================= */
 const SAMPLE_PRODUCTS: Product[] = [
   {
     id: "hello-kitty",
@@ -76,10 +73,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "Sanrio",
     color: "Negro",
     sizes: ["ÚNICO"],
-    images: [
-      "/products/Marco-My-Melody-y-Kuromi-frente.png",
-      "/products/Sweater-My-Melody-y-Kuromi.jpg",
-    ],
+    images: ["/products/Marco-My-Melody-y-Kuromi-frente.png", "/products/Sweater-My-Melody-y-Kuromi.jpg"],
   },
   {
     id: "cinnamoroll",
@@ -182,10 +176,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "Mean Girls",
     color: "Rosa",
     sizes: ["ÚNICO"],
-    images: [
-      "/products/Marco-Burn-Book-frente.png",
-      "/products/talle-burn-book.png",
-    ],
+    images: ["/products/Marco-Burn-Book-frente.png", "/products/talle-burn-book.png"],
   },
   {
     id: "buzo-garfi",
@@ -211,14 +202,10 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "Nickelodeon",
     color: "Violeta",
     sizes: ["ÚNICO"],
-    images: [
-      "/products/Marco-Nick90-frente.png",
-      "/products/Marco-Nick90-atras.png",
-      "/products/Talle-buzo-Nick90.png",
-    ],
+    images: ["/products/Marco-Nick90-frente.png", "/products/Marco-Nick90-atras.png", "/products/Talle-buzo-Nick90.png"],
   },
   {
-    id: "buzo-appa", 
+    id: "buzo-appa",
     name: "Buzo Appa",
     price: 124990,
     category: "Buzos",
@@ -226,15 +213,44 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "Avatar",
     color: "Blanco",
     sizes: ["1", "2"],
-    images: [
-      "/products/Marco-Appa-frente.png",
-      "/products/Marco-Appa-atras.png",
-      "/products/talle-buzo-appa.png",
-    ],
+    images: ["/products/Marco-Appa-frente.png", "/products/Marco-Appa-atras.png", "/products/talle-buzo-appa.png"],
+  },
+  {
+    id: "S-NF",
+    name: "Sweater No Face",
+    price: 74990,
+    category: "Sweaters",
+    licensed: false,
+    brand: "inspirado",
+    color: "Lila",
+    sizes: ["ÚNICO"],
+    images: ["/products/Marco-No-Face-frente.png", "/products/Marco-No-Face-atras.png", "/products/talle-Sweater-No-Face.jpeg"],
+  },
+  {
+    id: "S-Koda",
+    name: "Sweater Kodama",
+    price: 74990,
+    category: "Sweaters",
+    licensed: false,
+    brand: "inspirado",
+    color: "Gris",
+    sizes: ["1", "2"],
+    images: ["/products/Marco-Kodama-Frente.png", "/products/Marco-Kodama-atras.png", "/products/Talle-Kodama.jpg"],
+  },
+  {
+    id: "S-Ke",
+    name: "Sweater Kero",
+    price: 74990,
+    category: "Sweaters",
+    licensed: false,
+    brand: "inspirado",
+    color: "Rosa",
+    sizes: ["ÚNICO"],
+    images: ["/products/Marco-Kero-frente.png", "/products/Marco-Kero-atras.png", "/products/Talle-Kero.jpg"],
   },
 ];
 
-// === Qué productos entran en el carrusel del héroe (1 foto c/u y en este orden)
+// Qué productos entran en el carrusel (1 foto c/u)
 const HERO_PRODUCT_IDS = [
   "hello-kitty",
   "my-melody-kuromi",
@@ -248,18 +264,22 @@ const HERO_PRODUCT_IDS = [
   "buzo-garfi",
   "buzo-nick",
   "buzo-appa",
+  "S-NF",
+  "S-Koda",
+  "S-Ke",
 ];
 
+/* =========================================================
+   HELPERS / UI
+   ========================================================= */
 function pesos(n: number) {
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 }
-
 function hash(str: string) {
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
   return h;
 }
-
 function PlaceholderArt({ seed }: { seed: string }) {
   const hue = useMemo(() => Math.abs(hash(seed)) % 360, [seed]);
   const bg = `hsl(${hue} 70% 96%)`;
@@ -280,9 +300,7 @@ function PlaceholderArt({ seed }: { seed: string }) {
   );
 }
 
-/* =========================
-   AVISO DE PAGO (reutilizable)
-   ========================= */
+/* Aviso de pago */
 function PaymentNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`rounded-xl border bg-white/80 ${compact ? "p-2 text-sm" : "p-3"}`}>
@@ -298,34 +316,32 @@ function PaymentNotice({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/* =========================
-   HÉROE: CARRUSEL (1 foto por producto seleccionado)
-   ========================= */
+/* Héroe: carrusel (1 foto por producto) */
 function HeroCarousel() {
   const slides = useMemo(() => {
     const byId = new Map(SAMPLE_PRODUCTS.map((p) => [p.id, p]));
     return HERO_PRODUCT_IDS
       .map((id) => byId.get(id))
-      .filter((p): p is Product => Boolean(p && p.images && p.images[0]))
+      .filter((p): p is Product => Boolean(p?.images?.[0]))
       .map((p) => ({ src: p.images![0]!, alt: p.name }));
   }, []);
 
   const [i, setI] = useState(0);
 
   useEffect(() => {
+    if (slides.length === 0) return;
     const id = setInterval(() => setI((p) => (p + 1) % slides.length), 3500);
     return () => clearInterval(id);
   }, [slides.length]);
+
+  if (slides.length === 0) return null;
 
   const go = (delta: number) => setI((p) => (p + delta + slides.length) % slides.length);
 
   return (
     <div className="relative aspect-[5/3] rounded-2xl overflow-hidden border bg-white">
       {slides.map((s, idx) => (
-        <div
-          key={s.src}
-          className={`absolute inset-0 transition-opacity duration-500 ${idx === i ? "opacity-100" : "opacity-0"}`}
-        >
+        <div key={s.src} className={`absolute inset-0 transition-opacity duration-500 ${idx === i ? "opacity-100" : "opacity-0"}`}>
           <Image src={s.src} alt={s.alt} fill className="object-cover" priority={idx === 0} />
         </div>
       ))}
@@ -359,11 +375,12 @@ function HeroCarousel() {
   );
 }
 
+/* Tarjeta de producto (modal con galería) */
 function ProductCard({ p }: { p: Product }) {
   const [open, setOpen] = useState(false);
 
   const mainImg = p.images?.[0] || p.image;
-  const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
+  const imgs = p.images?.length ? p.images : p.image ? [p.image] : [];
   const [idx, setIdx] = useState(0);
   useEffect(() => setIdx(0), [p.id]);
 
@@ -378,13 +395,7 @@ function ProductCard({ p }: { p: Product }) {
             <button className="w-full text-left">
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border bg-white">
                 {mainImg ? (
-                  <Image
-                    src={mainImg}
-                    alt={p.name}
-                    fill
-                    sizes="(min-width: 768px) 33vw, 100vw"
-                    className="object-cover"
-                  />
+                  <Image src={mainImg} alt={p.name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
                 ) : (
                   <PlaceholderArt seed={p.id + p.name} />
                 )}
@@ -405,7 +416,7 @@ function ProductCard({ p }: { p: Product }) {
               </DialogTitle>
             </DialogHeader>
 
-            {/* GALERÍA */}
+            {/* Galería */}
             <div className="space-y-3">
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border bg-white">
                 {imgs.length ? (
@@ -439,10 +450,7 @@ function ProductCard({ p }: { p: Product }) {
                     {imgs.length > 1 && (
                       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-white/80 rounded-full px-2 py-1">
                         {imgs.map((_, i) => (
-                          <span
-                            key={i}
-                            className={`h-1.5 w-3 rounded-full ${i === idx ? "bg-violet-600" : "bg-slate-300"}`}
-                          />
+                          <span key={i} className={`h-1.5 w-3 rounded-full ${i === idx ? "bg-violet-600" : "bg-slate-300"}`} />
                         ))}
                       </div>
                     )}
@@ -452,52 +460,37 @@ function ProductCard({ p }: { p: Product }) {
                 )}
               </div>
 
-              {imgs.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pt-1">
-                  {imgs.map((src, i) => (
-                    <button
-                      key={src}
-                      onClick={() => setIdx(i)}
-                      className={`relative h-16 w-16 rounded-xl overflow-hidden border ${i === idx ? "ring-2 ring-violet-500" : ""}`}
-                      aria-label={`Miniatura ${i + 1}`}
-                    >
-                      <Image src={src} alt={`${p.name} miniatura ${i + 1}`} fill className="object-cover" sizes="64px" />
-                    </button>
+              <div className="space-y-4 mt-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-2xl font-semibold">{pesos(p.price)}</div>
+                  <Badge variant="outline">{p.category}</Badge>
+                </div>
+
+                {/* Aviso de formas de pago (compacto) */}
+                <div className="mt-2">
+                  <PaymentNotice compact />
+                </div>
+
+                <p className="text-sm text-muted-foreground">
+                  Vista previa. Muy pronto cargamos stock en tiempo real.
+                </p>
+                <Separator />
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium">Talles:</span>
+                  {p.sizes.map((s) => (
+                    <Badge key={s} variant="secondary">
+                      {s}
+                    </Badge>
                   ))}
                 </div>
-              )}
-            </div>
-
-            <div className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div className="text-2xl font-semibold">{pesos(p.price)}</div>
-                <Badge variant="outline">{p.category}</Badge>
-              </div>
-
-              {/* Aviso de formas de pago (compacto) */}
-              <div className="mt-2">
-                <PaymentNotice compact />
-              </div>
-
-              <p className="text-sm text-muted-foreground">
-                Vista previa. Muy pronto cargamos stock en tiempo real.
-              </p>
-              <Separator />
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium">Talles:</span>
-                {p.sizes.map((s) => (
-                  <Badge key={s} variant="secondary">
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button disabled className="w-full">
-                  Agregar al carrito (próximamente)
-                </Button>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                ¿Te interesa? Escribinos por Instagram y te reservamos.
+                <div className="flex items-center gap-2">
+                  <Button disabled className="w-full">
+                    Agregar al carrito (próximamente)
+                  </Button>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  ¿Te interesa? Escribinos por Instagram y te reservamos.
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -527,6 +520,9 @@ function ProductCard({ p }: { p: Product }) {
   );
 }
 
+/* =========================================================
+   PÁGINA
+   ========================================================= */
 export default function HoraDeVestirse() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Category | "Todos">("Todos");
@@ -535,13 +531,7 @@ export default function HoraDeVestirse() {
   // Licencias únicas para mostrar en el hero
   const licensedBrands = useMemo(
     () =>
-      Array.from(
-        new Set(
-          SAMPLE_PRODUCTS
-            .filter((p) => p.licensed && p.brand && p.brand.trim().length > 0)
-            .map((p) => p.brand)
-        )
-      ),
+      Array.from(new Set(SAMPLE_PRODUCTS.filter((p) => p.licensed && p.brand?.trim()).map((p) => p.brand))),
     []
   );
 
@@ -637,7 +627,6 @@ export default function HoraDeVestirse() {
               </a>
             </div>
 
-            {/* Aviso de formas de pago */}
             <div className="mt-4">
               <PaymentNotice />
             </div>
@@ -646,9 +635,7 @@ export default function HoraDeVestirse() {
             <div className="mt-4 flex items-center gap-2 text-sm text-slate-500 flex-wrap">
               <Badge variant="secondary" className="gap-1">
                 <BadgeCheck className="h-3 w-3" />
-                {licensedBrands.length > 0
-                  ? `Licencias: ${licensedBrands.join(", ")}`
-                  : "Licencias oficiales"}
+                {licensedBrands.length > 0 ? `Licencias: ${licensedBrands.join(", ")}` : "Licencias oficiales"}
               </Badge>
               <span>·</span>
               <span>Hecho en Argentina</span>
@@ -782,7 +769,6 @@ function SortSelect({
     </>
   );
 }
-
 function itemCls(active: boolean) {
   return `w-full text-left px-3 py-2 text-sm ${active ? "bg-violet-50" : "hover:bg-slate-50"}`;
 }
