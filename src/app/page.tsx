@@ -279,7 +279,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     brand: "inspirado",
     color: "Gris",
     sizes: ["ÚNICO"],
-    images: ["/products/Marco-Marco-DeathNote-frente.png", "/products/Marco-DeathNote-atras.png", "/products/Talle-DeathNote.jpg"],
+    images: ["/products/Marco-DeathNote-frente.png", "/products/Marco-DeathNote-atras.png", "/products/Talle-DeathNote.jpg"],
   },
 ];
 
