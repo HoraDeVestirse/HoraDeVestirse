@@ -248,6 +248,39 @@ const SAMPLE_PRODUCTS: Product[] = [
     sizes: ["ÚNICO"],
     images: ["/products/Marco-Kero-frente.png", "/products/Marco-Kero-atras.png", "/products/Talle-Kero.jpg"],
   },
+  {
+    id: "S-Ti",
+    name: "Sweater Titan",
+    price: 74990,
+    category: "Sweaters",
+    licensed: true,
+    brand: "Shingeki no Kyojin",
+    color: "Negro",
+    sizes: ["ÚNICO"],
+    images: ["/products/Marco-SnK-frente.png", "/products/Marco-SnK-atras.png", "/products/Talle-Titan.jpg"],
+  },
+  {
+    id: "S-Ku",
+    name: "Sweater Kurapika",
+    price: 74990,
+    category: "Sweaters",
+    licensed: false,
+    brand: "inspirado",
+    color: "Negro",
+    sizes: ["ÚNICO"],
+    images: ["/products/Marco-Kurapica-frente.png", "/products/Marco-Kurapica-atras.png", "/products/talle-Sweater-Kurapika.jpeg"],
+  },
+  {
+    id: "S-Shi",
+    name: "Sweater Shinigami",
+    price: 74990,
+    category: "Sweaters",
+    licensed: false,
+    brand: "inspirado",
+    color: "Gris",
+    sizes: ["ÚNICO"],
+    images: ["/products/Marco-Marco-DeathNote-frente.png", "/products/Marco-DeathNote-atras.png", "/products/Talle-DeathNote.jpg"],
+  },
 ];
 
 // Qué productos entran en el carrusel (1 foto c/u)
@@ -267,6 +300,9 @@ const HERO_PRODUCT_IDS = [
   "S-NF",
   "S-Koda",
   "S-Ke",
+  "S-Ti",
+  "S-Ku",
+  "S-Shi",
 ];
 
 /* =========================================================
@@ -709,7 +745,7 @@ export default function HoraDeVestirse() {
           <div>
             <div className="font-semibold">Licencias</div>
             <p className="mt-2 text-muted-foreground">
-              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio, Garfield, Nickelodeon, Avatar, Mean Girls) y líneas de producción propia.
+              Trabajamos con licencias oficiales seleccionadas (p.ej., Sanrio, Garfield, Nickelodeon, Avatar, Mean Girls, Shingeki no Kyojin) y líneas de producción propia.
             </p>
           </div>
         </div>
